@@ -14,7 +14,7 @@ public class MyHashMap {
     }
 
     public void put(String key, String value) {
-        int index = Math.abs(key.hashCode()) % buckets.length;
+        int index = Math.floorMod(key.hashCode(), buckets.length);
 
         Node current = buckets[index];
         while (current != null) {
@@ -65,3 +65,14 @@ public class MyHashMap {
         return null;
     }
 }
+
+
+
+
+
+
+
+
+
+
+
