@@ -1,41 +1,54 @@
-public class MyHashMap {
+import java.util.Objects;
 
-    private Node[] buckets = new Node[16];
+public class MyHashMap<K, V> {
 
-    private static class Node {
-        private String key;
-        private String value;
-        private Node next;
+    private static final int DEFAULT_CAPACITY = 16;
 
-        private Node(String key, String value) {
+    private final Node<K, V>[] buckets;
+
+    private static class Node<K, V> {
+        private final K key;
+        private V value;
+        private Node<K, V> next;
+
+        private Node(K key, V value) {
             this.key = key;
             this.value = value;
         }
     }
 
-    public void put(String key, String value) {
-        int index = Math.floorMod(key.hashCode(), buckets.length);
+    @SuppressWarnings("unchecked")
+    public MyHashMap() {
+        buckets = (Node<K, V>[]) new Node[DEFAULT_CAPACITY];
+    }
 
-        Node current = buckets[index];
+    private int indexFor(Object key) {
+        return Math.floorMod(Objects.hashCode(key), buckets.length);
+    }
+
+    public void put(K key, V value) {
+        int index = indexFor(key);
+
+        Node<K, V> current = buckets[index];
         while (current != null) {
-            if (current.key.equals(key)) {
+            if (Objects.equals(current.key, key)) {
                 current.value = value;
                 return;
             }
             current = current.next;
         }
 
-        Node newNode = new Node(key, value);
+        Node<K, V> newNode = new Node<>(key, value);
         newNode.next = buckets[index];
         buckets[index] = newNode;
     }
 
-    public String get(String key) {
-        int index = Math.abs(key.hashCode()) % buckets.length;
+    public V get(K key) {
+        int index = indexFor(key);
 
-        Node current = buckets[index];
+        Node<K, V> current = buckets[index];
         while (current != null) {
-            if (current.key.equals(key)) {
+            if (Objects.equals(current.key, key)) {
                 return current.value;
             }
             current = current.next;
@@ -43,14 +56,15 @@ public class MyHashMap {
 
         return null;
     }
-    public String remove(String key) {
-        int index = Math.abs(key.hashCode()) % buckets.length;
 
-        Node current = buckets[index];
-        Node previous = null;
+    public V remove(K key) {
+        int index = indexFor(key);
+
+        Node<K, V> current = buckets[index];
+        Node<K, V> previous = null;
 
         while (current != null) {
-            if (current.key.equals(key)) {
+            if (Objects.equals(current.key, key)) {
                 if (previous == null) {
                     buckets[index] = current.next;
                 } else {
@@ -65,14 +79,3 @@ public class MyHashMap {
         return null;
     }
 }
-
-
-
-
-
-
-
-
-
-
-
